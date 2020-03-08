@@ -21,7 +21,7 @@ function addCourseOptions() {
         checkbox.checked = true;
         checkbox.classList.add("checkbox");
         options_body[i].getElementsByTagName('td')[0].appendChild(checkbox);
-        checkbox.addEventListener('change', e => {                                  // Waits for a change in each checkbox
+        checkbox.addEventListener('change', e => {                               // Waits for a change in each checkbox
             if(e.target.checked) {
                 for(let event of events){
                     if(event.getElementsByTagName("a")[0].text === course_name){
