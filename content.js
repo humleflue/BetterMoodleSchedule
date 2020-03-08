@@ -8,24 +8,21 @@ function addCourseOptions() {
     const options_body = course_table.getElementsByTagName('tbody')[0].rows;
 
     // Adds checkboxes to "kursustable"
-    options_header.insertCell(0).innerHTML = "Show course";
+    // - Header
+    const checkbox_header_cell = options_header.insertCell(0);
+    checkbox_header_cell.innerHTML = "Show course";
+    checkbox_header_cell.style = "width: 7%";
+    // - Body
     for(let i = 0; i < options_body.length; i++){
         const course_name = options_body[i].getElementsByTagName('td')[1].innerText;
         let checkbox = document.createElement("input");
 
         checkbox.type = "checkbox";
         checkbox.checked = true;
-        chrome.storage.sync.get([course_name, 'foo'], result => {
-            console.log(result.course_name);
-            console.log("Foo: " + result.foo)
-        });
         checkbox.classList.add("checkbox");
         options_body[i].getElementsByTagName('td')[0].appendChild(checkbox);
-        checkbox.addEventListener('change', e => {
+        checkbox.addEventListener('change', e => {                                  // Waits for a change in each checkbox
             if(e.target.checked) {
-                chrome.storage.sync.set({course_name: 'true'}, () => {
-                    console.log(course_name+': Value is set to true');
-                });
                 for(let event of events){
                     if(event.getElementsByTagName("a")[0].text === course_name){
                         event.style.visibility = 'visible';
@@ -33,9 +30,6 @@ function addCourseOptions() {
                 }
             }
             else {
-                chrome.storage.sync.set({course_name: 'false'}, () => {
-                    console.log(course_name+': Value is set to false');
-                });
                 for(let event of events){
                     if(event.getElementsByTagName("a")[0].text === course_name){
                         event.style.visibility = 'hidden';
