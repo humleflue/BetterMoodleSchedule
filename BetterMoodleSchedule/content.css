@@ -3,10 +3,14 @@
     font-family: "Comic Sans MS";
 }
 
+/* Checkbox header */
 #kursustable > thead {
     font-weight: bold;
 }
-
+#show_course {
+    width: 20%;
+}
+/* Checkbox body */
 .checkbox {
     text-align: center;
     vertical-align: middle;
