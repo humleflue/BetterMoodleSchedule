@@ -7,11 +7,15 @@
 #kursustable > thead {
     font-weight: bold;
 }
-#show_course {
-    width: 20%;
+
+/* BetterMoodleSchedule (BMS) element styles */
+
+#BMS-instructions {
+    font-style: italic;
+    color: #888;
 }
 /* Checkbox body */
-.checkbox {
+.BMS-checkbox {
     text-align: center;
     vertical-align: middle;
 }
