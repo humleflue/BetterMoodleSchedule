@@ -7,6 +7,17 @@ showAllEventsOfDay(); // User can show all hidden events of a day by clicking on
 changeSpecificEventTime(); // User can change an events time by clicking on it
 getFromChromeStorage(); // Retrieves all values from chrome storage and applies them
 
+// FIXME: Fjernes efter corona :D
+replaceDanebrog(); // FIXME: Fjernes efter corona :D
+function replaceDanebrog() { // FIXME: Fjernes efter corona :D
+    const div_languages = document.getElementById("languages"); // FIXME: Fjernes efter corona :D
+    let img_elem = div_languages.childNodes[1].childNodes[0]; // FIXME: Fjernes efter corona :D
+    if(img_elem.src === "https://www.moodle.aau.dk/calmoodle/img/dk.png"){ // FIXME: Fjernes efter corona :D
+        img_elem.src = "https://i.redd.it/cojuelrafcm41.jpg"; // FIXME: Fjernes efter corona :D
+        img_elem.width = "36"; // FIXME: Fjernes efter corona :D
+    } // FIXME: Fjernes efter corona :D
+} // FIXME: Fjernes efter corona :D
+
 // ADDCOURSEOPTIONS //
 function addCourseOptions() {
     const course_table = document.getElementById("kursustable");
