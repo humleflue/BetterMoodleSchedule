@@ -28,7 +28,6 @@
   ],
   
   "permissions": [
-    "contextMenus",
     "tabs",
     "storage",
     "declarativeContent",
