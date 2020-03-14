@@ -1,3 +1,5 @@
+'use strict';
+
 chrome.runtime.sendMessage({todo: "showPageAction"});
 addCourseOptions(); // Adds option to hide all events of a course
 hideSpecificEvent(); // User can hide specific event by doubleclicking
@@ -115,6 +117,9 @@ function showAllEventsOfDayOnClick(elem) {
 function changeSpecificEventTime() {
     const all_course_events_time = document.getElementsByClassName("time");
     for(let time of all_course_events_time){
+        const identifier = getUniqueEventIdentifier(time.parentNode) + "_time";
+        const original_text = time.innerText;
+        // Let's user change time of event on click
         time.addEventListener('click', () => {
             let reg_ex = /\w+:(\w+ - \w+:\w+)/
             let event_time = reg_ex.exec(time.innerText)[0]; // Gets the time of the event to use in the prompt
@@ -131,9 +136,14 @@ function changeSpecificEventTime() {
             } while (!done)
             if(wanted_time !== null){
                 time.innerText = "Time: " + wanted_time;
-                let identifier = getUniqueEventIdentifier(time.parentNode) + "_time";
                 chrome.storage.sync.set({[identifier]: time.innerText});
             }
+        });
+        // Restores original value on right click
+        time.addEventListener('contextmenu', elem => {
+            elem.preventDefault();
+            time.innerText = original_text;
+            chrome.storage.sync.set({[identifier]: time.innerText})
         });
     }
 }
