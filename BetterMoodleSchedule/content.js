@@ -7,7 +7,7 @@ showAllEventsOfDay(); // User can show all hidden events of a day by clicking on
 changeSpecificEventTime(); // User can change an events time by clicking on it
 getFromChromeStorage(); // Retrieves all values from chrome storage and applies them
 
-// FIXME: Fjernes efter corona :D
+// Skifter danebrog ud med et coronaflag på siden FIXME: Fjernes efter corona :D
 replaceDanebrog(); // FIXME: Fjernes efter corona :D
 function replaceDanebrog() { // FIXME: Fjernes efter corona :D
     const div_languages = document.getElementById("languages"); // FIXME: Fjernes efter corona :D
@@ -18,7 +18,7 @@ function replaceDanebrog() { // FIXME: Fjernes efter corona :D
     } // FIXME: Fjernes efter corona :D
 } // FIXME: Fjernes efter corona :D
 
-// ADDCOURSEOPTIONS //
+/****************************** ADDCOURSEOPTIONS *******************************/
 function addCourseOptions() {
     const course_table = document.getElementById("kursustable");
     const options_body = course_table.getElementsByTagName('tbody')[0].rows;
@@ -79,7 +79,7 @@ function showOrHideCourse(course_name, visibility) {
     }
 }
 
-// HIDESPECIFICEVENT //
+/******************************* HIDESPECIFICEVENT *******************************/
 function hideSpecificEvent() {
     const all_course_events = document.getElementsByClassName("event");
     for(let event of all_course_events){
@@ -90,7 +90,7 @@ function hideSpecificEvent() {
     }
 }
 function setEventStateInChromeStorage(event, state){
-    const identifier = getUniqueEventIdentifier(event);
+    const identifier = getUniqueEventIdentifier(event) + "_state";
     chrome.storage.sync.set({[identifier]: state});
 }
 function getUniqueEventIdentifier(event){
@@ -105,7 +105,7 @@ function getChildNodeIndex(child){
     return i;
 }
 
-// SHOWALLEVENTSOFDAY //
+/******************************* SHOWALLEVENTSOFDAY *******************************/
 function showAllEventsOfDay() {
     const all_days = document.getElementsByClassName("day");
     for(let day of all_days){
@@ -124,7 +124,7 @@ function showAllEventsOfDayOnClick(elem) {
     });
 }
 
-// CHANGESPECIFICEVENTTIME //
+/******************************* CHANGESPECIFICEVENTTIME *******************************/
 function changeSpecificEventTime() {
     const all_course_events_time = document.getElementsByClassName("time");
     for(let time of all_course_events_time){
@@ -172,7 +172,7 @@ function testTimeForSyntax(str) {
     }
 }
 
-// GETFROMCHROMESTORAGE //
+/******************************* GETFROMCHROMESTORAGE *******************************/
 async function getFromChromeStorage() {
     await getCheckboxStateFromChromeStorage();
     await getEventStatesFromChromeStorage();
@@ -199,11 +199,10 @@ async function getCheckboxStateFromChromeStorage() {
         });
     }
 }
-
 async function getEventStatesFromChromeStorage() {
     const all_course_events = document.getElementsByClassName("event");
     for(let event of all_course_events){
-        const identifier = getUniqueEventIdentifier(event);
+        const identifier = getUniqueEventIdentifier(event) + "_state";
         await chrome.storage.sync.get([identifier], result => {
             const state = result[identifier];
             if(state === 'hidden'){
@@ -215,7 +214,6 @@ async function getEventStatesFromChromeStorage() {
         });
     }
 }
-
 async function getEventTimesFromChromeStorage() {
     const all_course_events_time = document.getElementsByClassName("time");
     for(let time of all_course_events_time){
