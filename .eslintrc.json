@@ -1,0 +1,29 @@
+{
+    "env": {
+        "browser": true,
+        "es6": true,
+        "webextensions": true
+    },
+    "extends": [
+        "airbnb-base"
+    ],
+    "globals": {
+        "Atomics": "readonly",
+        "SharedArrayBuffer": "readonly"
+    },
+    "parserOptions": {
+        "ecmaVersion": 2018
+    },
+    "rules": {                                                            // Dokumentation: https://eslint.org/docs/rules/
+        "linebreak-style": 0,                                             // Tillader linjeskift på windows :'D
+        "quotes": ["error", "backtick", {"allowTemplateLiterals": true}], // Tillader kun at man bruger backtics i strings
+        "no-use-before-define": ["error", {"functions": false }],         // Tillader at man kalder funktioner inden de er erklæret
+        "no-plusplus": 0,                                                 // Tillader post- og prefix increment og decrement
+        "curly": ["error", "all"],                                        // Vi skal altid bruge curly brackets
+        "brace-style": ["error", "stroustrup"],                           // Håndhæver stroustrup reglen: https://eslint.org/docs/rules/brace-style#stroustrup
+        "radix": ["error", "as-needed"],                                  // Tillader parseInt(var) uden radix-parameter
+        "no-restricted-syntax": 0,                                        // Tillader for-in loops og andet "heavy weight stuff"
+        "max-len": 0,
+        "no-alert": 0
+    }
+}

@@ -3,13 +3,11 @@
     font-family: "Comic Sans MS";
 }
 
-/* Checkbox header */
 #kursustable > thead {
     font-weight: bold;
 }
 
 /* BetterMoodleSchedule (BMS) element styles */
-
 #BMS-instructions {
     font-style: italic;
     color: #888;

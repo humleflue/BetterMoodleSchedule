@@ -1,0 +1,63 @@
+{
+  "name": "bettermoodleschedule",
+  "version": "1.0.0",
+  "description": "Chrome Extension which enhances the public Moodle schedule",
+  "main": "index.js",
+  "dependencies": {
+    "acorn-jsx": "^5.2.0",
+    "acorn": "^7.1.1",
+    "ansi-escapes": "^4.3.1",
+    "ansi-regex": "^5.0.0",
+    "ansi-styles": "^3.2.1",
+    "astral-regex": "^1.0.0",
+    "balanced-match": "^1.0.0",
+    "brace-expansion": "^1.1.11",
+    "callsites": "^3.1.0",
+    "cli-width": "^2.2.0",
+    "chardet": "^0.7.0",
+    "color-convert": "^1.9.3",
+    "color-name": "^1.1.3",
+    "deep-is": "^0.1.3",
+    "concat-map": "^0.0.1",
+    "escape-string-regexp": "^1.0.5",
+    "emoji-regex": "^8.0.0",
+    "eslint-visitor-keys": "^1.1.0",
+    "esrecurse": "^4.2.1",
+    "esprima": "^4.0.1",
+    "estraverse": "^4.3.0",
+    "esutils": "^2.0.3",
+    "fast-deep-equal": "^3.1.1",
+    "fast-json-stable-stringify": "^2.1.0",
+    "fast-levenshtein": "^2.0.6",
+    "figures": "^3.2.0",
+    "flatted": "^2.0.1",
+    "fs.realpath": "^1.0.0",
+    "has-flag": "^3.0.0",
+    "is-extglob": "^2.1.1",
+    "inherits": "^2.0.4",
+    "is-fullwidth-code-point": "^3.0.0",
+    "is-glob": "^4.0.1",
+    "is-promise": "^2.1.0",
+    "isexe": "^2.0.0",
+    "js-tokens": "^4.0.0",
+    "json-schema-traverse": "^0.4.1"
+  },
+  "devDependencies": {
+    "eslint": "^6.8.0",
+    "eslint-config-airbnb-base": "^14.1.0",
+    "eslint-plugin-import": "^2.20.1"
+  },
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/humleflue/BetterMoodleSchedule.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/humleflue/BetterMoodleSchedule/issues"
+  },
+  "homepage": "https://github.com/humleflue/BetterMoodleSchedule#readme"
+}
