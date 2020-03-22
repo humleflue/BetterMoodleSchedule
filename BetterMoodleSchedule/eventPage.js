@@ -5,4 +5,9 @@ chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
       chrome.pageAction.show(tabs[0].id);
     });
   }
+  else if (request.todo === `eventListenEventTime`) {
+    setTimeout(() => {
+      chrome.notifications.create(`timeForLecture`, request.NotifOptions);
+    }, parseInt(request.timeUntilNotif));
+  }
 });
