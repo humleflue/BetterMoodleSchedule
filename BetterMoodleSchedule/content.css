@@ -20,3 +20,35 @@
     text-align: center;
     vertical-align: middle;
 }
+
+/* Class title */
+div.event a{
+  text-align: center;
+  font-weight: bold;
+  font-size: 140%;
+}
+
+div.event{
+  padding: 1mm;
+  border-radius: 1.5mm;
+  border-style: solid;
+  border-width: 1px;
+  border-color: black;
+  box-shadow: 0 1mm 2mm -0.5mm black;
+}
+div.event > div{
+  padding: 1mm 0;
+}
+
+div.event div.time{
+  font-weight: bold;
+}
+
+td+td+td{
+  width:500px;
+}
+td+td+td>input{
+  width:99%;
+  border-style:none;
+  padding-left:1mm;
+}
