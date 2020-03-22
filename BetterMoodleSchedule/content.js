@@ -61,14 +61,7 @@ function addCourseOptions() {
     chrome.storage.sync.clear();
     chrome.storage.local.clear();
     // Display a confirmation message
-    const resetMsgP = document.createElement(`p`);
-    const resetMsgText = document.createTextNode(`Your Moodle Schedule has been restored to original. Reload the page to see the effects.`);
-    const resetMsgElem = resetMsgP.appendChild(resetMsgText);
-    resetMsgP.id = `BMS-reset`;
-    resetBtn.parentNode.insertBefore(resetMsgP, resetBtn.nextSibling);
-    setTimeout(() => {
-      resetMsgElem.remove();
-    }, 5000);
+    window.location.reload(true);
   };
 }
 // Set courseName to either 'visible' or 'hidden'
