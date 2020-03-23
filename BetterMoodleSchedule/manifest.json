@@ -31,7 +31,6 @@
     "tabs",
     "storage",
     "declarativeContent",
-    "https://www.moodle.aau.dk/calmoodle/public/*",
-    "notifications"
+    "https://www.moodle.aau.dk/calmoodle/public/*"
   ]
 }

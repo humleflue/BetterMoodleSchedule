@@ -25,6 +25,7 @@ else {
 function initCode() {
   if (decodeURIComponent(window.location.hash) === `#restore schedule`) { // Display a confirmation message that original schedule has been restored
     const resetMsgElem = insertDomNode(`p`, SCHEDULE, `Your Moodle Schedule has been restored to original.`, [{ type: `id`, val: `BMS-reset` }]);
+    window.location.hash = ``;
     setTimeout(() => {
       resetMsgElem.style.opacity = `0`;
     }, 4000);
@@ -98,6 +99,13 @@ function insertDomNode(tagName, insBeforeThisElem, text, selectors) {
   return node;
 }
 
+// Appends a DOM node to the given parent
+function appendDomNode(tagName, parent, text, selectors) {
+  const node = createDomNode(tagName, text, selectors);
+  parent.appendChild(node);
+  return node;
+}
+
 function createDomNode(tagName, text, selectors) {
   const elem = document.createElement(tagName);
   if (selectors) {
@@ -108,20 +116,9 @@ function createDomNode(tagName, text, selectors) {
   switch (tagName) {
     case `p`:      elem.appendChild(document.createTextNode(text)); break;
     case `button`: elem.innerHTML = text;                           break;
-    case `div`:                                                     break;
-    case `br`:                                                      break;
-    default:
-      console.error(`${tagName} is not defined yet in function: createDomNode()`); // eslint-disable-line no-console
-      break;
+    default:                                                        break;
   }
   return elem;
-}
-
-// Appends a DOM node to the given parent
-function appendDomNode(tagName, parent, text, selectors) {
-  const node = createDomNode(tagName, text, selectors);
-  parent.appendChild(node);
-  return node;
 }
 
 /* ****************************** HIDESPECIFICEVENT ****************************** */
