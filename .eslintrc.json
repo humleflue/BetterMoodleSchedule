@@ -25,6 +25,7 @@
         "no-restricted-syntax": 0,                                        // Tillader for-in loops og andet "heavy weight stuff"
         "max-len": 0,
         "no-alert": 0,
-        "no-multi-spaces": 0
+        "no-multi-spaces": 0,
+        "no-case-declarations": 0                                         // Allows declarations inside switch cases
     }
 }
