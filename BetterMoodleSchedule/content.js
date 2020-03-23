@@ -219,6 +219,7 @@ function testTimeForSyntax(str) {
   return regEx.test(str);
 }
 
+
 /* ****************************** EVENTLISTENEVENTTIME ****************************** */
 /* Date format: 17/03/2020
  * Time format: 10:15
