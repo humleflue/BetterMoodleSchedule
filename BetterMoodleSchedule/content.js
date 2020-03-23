@@ -1,3 +1,4 @@
+const curDate = new Date();
 
 chrome.runtime.sendMessage({ todo: `showPageAction` });
 
@@ -7,6 +8,7 @@ showAllEventsOfDay(); // User can show all hidden events of a day by clicking on
 changeSpecificEventTime(); // User can change an events time by clicking on it
 getFromChromeStorage(); // Retrieves all values from chrome storage and applies them
 eventListenEventTime();
+highlightDay(); // Highlights the current day
 
 // Skifter danebrog ud med et coronaflag på siden FIXME: Fjernes efter corona :D
 replaceDanebrog(); // FIXME: Fjernes efter corona :D
@@ -174,7 +176,6 @@ function testTimeForSyntax(str) {
  */
 function eventListenEventTime() {
   const allCourseEventsTime = document.getElementsByClassName(`time`);
-  const curDate = new Date();
   for (const timeElem of allCourseEventsTime) {
     const eventStartTime = /\w+:([0-9][0-9])/.exec(timeElem.innerText)[0];
     const time = eventStartTime.split(`:`);
@@ -197,6 +198,24 @@ function eventListenEventTime() {
       });
     }
   }
+}
+
+function highlightDay() {
+  const dates = document.getElementsByClassName(`date`);
+  const todayDay = curDate.getDate();
+  let done = false;
+  let i = 0;
+  while (!done) {
+    const dateDay = parseInt(dates[i].innerText.split(`/`)[0]);
+    if (dateDay === todayDay) {
+      done = true;
+    }
+    else {
+      i++;
+    }
+  }
+  const todayElem = dates[i].parentNode;
+  todayElem.style.backgroundColor = `#f7e0c0`;
 }
 
 /* ****************************** GETFROMCHROMESTORAGE ****************************** */
