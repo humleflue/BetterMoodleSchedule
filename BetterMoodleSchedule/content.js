@@ -11,7 +11,6 @@ hideSpecificEvent(); // User can hide specific event by doubleclicking
 showAllEventsOfDay(); // User can show all hidden events of a day by clicking on the date or the day of the week
 changeSpecificEventTime(); // User can change an events time by clicking on it
 getFromChromeStorage(); // Retrieves all values from chrome storage and applies them
-eventListenEventTime();
 highlightDay(); // Highlights the current day
 
 // Do stuff on load
@@ -217,36 +216,6 @@ function testTimeForSyntax(str) {
 
   const regEx = /([0-9][0-9]:[0-9][0-9] - [0-9][0-9]:[0-9][0-9])/;
   return regEx.test(str);
-}
-
-/* ****************************** EVENTLISTENEVENTTIME ****************************** */
-/* Date format: 17/03/2020
- * Time format: 10:15
- */
-function eventListenEventTime() {
-  const allCourseEventsTime = document.getElementsByClassName(`time`);
-  for (const timeElem of allCourseEventsTime) {
-    const eventStartTime = /\w+:([0-9][0-9])/.exec(timeElem.innerText)[0];
-    const time = eventStartTime.split(`:`);
-    const eventDate = timeElem.parentNode.parentNode.childNodes[1].innerText;
-    const date = eventDate.split(`/`);
-    const fullDate = new Date(date[2], --date[1], date[0], time[0], time[1]); // new Date(year, month, day, hour, and minute)
-    const timeUntilEvent = fullDate.getTime() - CUR_DATE.getTime();
-    const timeUntilNotif = timeUntilEvent - (15 * 60 * 1000); // Displays notification 15 minutes before lecture
-    if (timeUntilNotif > 0 && timeUntilNotif < 2147483648) { // Makes sure the event haven't already been there and we don't get overflow in setTimeout()
-      const courseName = timeElem.parentNode.getElementsByTagName(`a`)[0].text;
-      chrome.runtime.sendMessage({
-        todo: `eventListenEventTime`,
-        timeUntilNotif: [timeUntilNotif],
-        NotifOptions: {
-          type: `basic`,
-          iconUrl: `icon48.png`,
-          title: `It's time for your lecture!`,
-          message: `"${courseName}" starts at ${eventStartTime}. It's time to go.`,
-        },
-      });
-    }
-  }
 }
 
 function highlightDay() {
