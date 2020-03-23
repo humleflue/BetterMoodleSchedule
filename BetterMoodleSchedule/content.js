@@ -1,4 +1,8 @@
-const curDate = new Date();
+const CUR_DATE = new Date();
+const COURSE_TABLE = document.getElementById(`kursustable`);
+const COURSE_TABLE_BODY = COURSE_TABLE.getElementsByTagName(`tbody`)[0].rows;
+const ALL_COURSE_EVENTS = document.getElementsByClassName(`event`);
+const SCHEDULE = document.getElementById(`schedule`);
 
 chrome.runtime.sendMessage({ todo: `showPageAction` });
 
@@ -9,6 +13,24 @@ changeSpecificEventTime(); // User can change an events time by clicking on it
 getFromChromeStorage(); // Retrieves all values from chrome storage and applies them
 eventListenEventTime();
 highlightDay(); // Highlights the current day
+
+// Do stuff on load
+if (document.readyState !== `loading`) {
+  initCode();
+}
+else {
+  document.addEventListener(`DOMContentLoaded`, () => {
+    initCode();
+  });
+}
+function initCode() {
+  if (decodeURIComponent(window.location.hash) === `#restore schedule`) { // Display a confirmation message that original schedule has been restored
+    const resetMsgElem = insertDomNode(`p`, SCHEDULE, `Your Moodle Schedule has been restored to original.`, [{ type: `id`, val: `BMS-reset` }]);
+    setTimeout(() => {
+      resetMsgElem.style.opacity = `0`;
+    }, 4000);
+  }
+}
 
 // Skifter danebrog ud med et coronaflag på siden FIXME: Fjernes efter corona :D
 replaceDanebrog(); // FIXME: Fjernes efter corona :D
@@ -23,18 +45,15 @@ function replaceDanebrog() { // FIXME: Fjernes efter corona :D
 
 /* ***************************** ADDCOURSEOPTIONS ****************************** */
 function addCourseOptions() {
-  const courseTable = document.getElementById(`kursustable`);
-  const optionsBody = courseTable.getElementsByTagName(`tbody`)[0].rows;
-
   // Adds checkboxes to "kursustable"
-  for (let i = 0; i < optionsBody.length; i++) {
-    const courseName = optionsBody[i].getElementsByTagName(`td`)[1].innerText;
+  for (let i = 0; i < COURSE_TABLE_BODY.length; i++) {
+    const courseName = COURSE_TABLE_BODY[i].getElementsByTagName(`td`)[1].innerText;
 
     // Create checkbox
     const checkbox = document.createElement(`input`);
     checkbox.type = `checkbox`;
     checkbox.classList.add(`BMS-checkbox`);
-    optionsBody[i].getElementsByTagName(`td`)[0].appendChild(checkbox);
+    COURSE_TABLE_BODY[i].getElementsByTagName(`td`)[0].appendChild(checkbox);
     checkbox.checked = true;
     // Waits for a change of state in each checkbox
     checkbox.addEventListener(`change`, (e) => {
@@ -49,38 +68,66 @@ function addCourseOptions() {
     });
   }
   // Adds instructions underneath table
-  const para = document.createElement(`p`);
-  const instructionsText = document.createTextNode(`Uncheck the check boxes above to hide entire course from schedule.\
-                                                  Click the extension icon for more functionalities (found in the top right corner of the Chrome interface).`);
-  para.appendChild(instructionsText);
-  para.id = `BMS-instructions`;
-  const instructions = courseTable.parentNode.insertBefore(para, courseTable.nextSibling);
+  const instructions = insertDomNode(`div`, COURSE_TABLE.nextSibling, ``, [{ type: `id`, val: `BMS-instructions` }]);
+  const instructionsText = appendDomNode(`p`, instructions, `Uncheck the check boxes above to hide entire course from schedule.`);
+  instructionsText.appendChild(document.createElement(`br`));
+  instructionsText.appendChild(document.createTextNode(
+    `Click the extension icon for more functionalities (found in the top right corner of the Chrome interface).`,
+  ));
   // Adds a button which resets chrome.storage underneath the instructions
-  const btn = document.createElement(`button`);
-  btn.innerHTML = `Restore original schedule`;
-  const resetBtn = instructions.parentNode.insertBefore(btn, instructions.nextSibling);
+  const resetBtn = insertDomNode(`button`, instructions.nextSibling, `Restore original schedule`);
   resetBtn.onclick = () => {
     chrome.storage.sync.clear();
     chrome.storage.local.clear();
-    // Display a confirmation message
+    window.location.hash = encodeURIComponent(`restore schedule`);
     window.location.reload(true);
   };
 }
 // Set courseName to either 'visible' or 'hidden'
 function showOrHideCourse(courseName, visibility) {
-  const allCourseEvents = document.getElementsByClassName(`event`);
-
-  for (const event of allCourseEvents) {
+  for (const event of ALL_COURSE_EVENTS) {
     if (event.getElementsByTagName(`a`)[0].text === courseName) {
       event.style.visibility = visibility;
     }
   }
 }
 
+// Inserts a DOM node before the given element
+function insertDomNode(tagName, insBeforeThisElem, text, selectors) {
+  const node = createDomNode(tagName, text, selectors);
+  insBeforeThisElem.parentNode.insertBefore(node, insBeforeThisElem);
+  return node;
+}
+
+function createDomNode(tagName, text, selectors) {
+  const elem = document.createElement(tagName);
+  if (selectors) {
+    for (const selector of selectors) {
+      elem[selector.type] = selector.val;
+    }
+  }
+  switch (tagName) {
+    case `p`:      elem.appendChild(document.createTextNode(text)); break;
+    case `button`: elem.innerHTML = text;                           break;
+    case `div`:                                                     break;
+    case `br`:                                                      break;
+    default:
+      console.error(`${tagName} is not defined yet in function: createDomNode()`); // eslint-disable-line no-console
+      break;
+  }
+  return elem;
+}
+
+// Appends a DOM node to the given parent
+function appendDomNode(tagName, parent, text, selectors) {
+  const node = createDomNode(tagName, text, selectors);
+  parent.appendChild(node);
+  return node;
+}
+
 /* ****************************** HIDESPECIFICEVENT ****************************** */
 function hideSpecificEvent() {
-  const allCourseEvents = document.getElementsByClassName(`event`);
-  for (const event of allCourseEvents) {
+  for (const event of ALL_COURSE_EVENTS) {
     event.addEventListener(`dblclick`, () => {
       event.style.visibility = `hidden`;
       setEventStateInChromeStorage(event, `hidden`);
@@ -98,7 +145,9 @@ function getUniqueEventIdentifier(event) {
 }
 function getChildNodeIndex(child) {
   let i = 0;
-  while ((child = child.previousSibling) != null) {
+  let elem = child.previousSibling;
+  while (elem != null) {
+    elem = elem.previousSibling;
     i++;
   }
   return i;
@@ -182,7 +231,7 @@ function eventListenEventTime() {
     const eventDate = timeElem.parentNode.parentNode.childNodes[1].innerText;
     const date = eventDate.split(`/`);
     const fullDate = new Date(date[2], --date[1], date[0], time[0], time[1]); // new Date(year, month, day, hour, and minute)
-    const timeUntilEvent = fullDate.getTime() - curDate.getTime();
+    const timeUntilEvent = fullDate.getTime() - CUR_DATE.getTime();
     const timeUntilNotif = timeUntilEvent - (15 * 60 * 1000); // Displays notification 15 minutes before lecture
     if (timeUntilNotif > 0 && timeUntilNotif < 2147483648) { // Makes sure the event haven't already been there and we don't get overflow in setTimeout()
       const courseName = timeElem.parentNode.getElementsByTagName(`a`)[0].text;
@@ -202,7 +251,7 @@ function eventListenEventTime() {
 
 function highlightDay() {
   const dates = document.getElementsByClassName(`date`);
-  const todayDay = curDate.getDate();
+  const todayDay = CUR_DATE.getDate();
   let done = false;
   let i = 0;
   while (!done) {
@@ -215,7 +264,7 @@ function highlightDay() {
     }
   }
   const todayElem = dates[i].parentNode;
-  todayElem.style.backgroundColor = `#f7e0c0`;
+  todayElem.style.backgroundColor = `LightGray`;
 }
 
 /* ****************************** GETFROMCHROMESTORAGE ****************************** */
@@ -226,12 +275,9 @@ function getFromChromeStorage() {
 }
 
 function getCheckboxStateFromChromeStorage() {
-  const courseTable = document.getElementById(`kursustable`);
-  const optionsBody = courseTable.getElementsByTagName(`tbody`)[0].rows;
-
-  for (let i = 0; i < optionsBody.length; i++) {
-    const courseName = optionsBody[i].getElementsByTagName(`td`)[1].innerText;
-    const checkbox = optionsBody[i].getElementsByTagName(`td`)[0].childNodes[0];
+  for (let i = 0; i < COURSE_TABLE_BODY.length; i++) {
+    const courseName = COURSE_TABLE_BODY[i].getElementsByTagName(`td`)[1].innerText;
+    const checkbox = COURSE_TABLE_BODY[i].getElementsByTagName(`td`)[0].childNodes[0];
     // Get stored state for checkbox
     chrome.storage.sync.get([courseName], (result) => {
       if (result[courseName] === true) {
@@ -246,8 +292,7 @@ function getCheckboxStateFromChromeStorage() {
   }
 }
 function getEventStatesFromChromeStorage() {
-  const allCourseEvents = document.getElementsByClassName(`event`);
-  for (const event of allCourseEvents) {
+  for (const event of ALL_COURSE_EVENTS) {
     const identifier = `${getUniqueEventIdentifier(event)}_state`;
     chrome.storage.sync.get([identifier], (result) => {
       const state = result[identifier];
