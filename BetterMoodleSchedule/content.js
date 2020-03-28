@@ -34,6 +34,7 @@ function addCourseOptions() {
     // Create checkbox
     const checkbox = document.createElement(`input`);
     checkbox.type = `checkbox`;
+    checkbox.title = `Uncheck to hide course from schedule`;
     checkbox.classList.add(`BMS-checkbox`);
     courseTableBody[i].getElementsByTagName(`td`)[0].appendChild(checkbox);
     checkbox.checked = true;
@@ -49,13 +50,6 @@ function addCourseOptions() {
       }
     });
   }
-  // Adds instructions underneath table
-  const instructions = insertDomNode(`div`, COURSE_TABLE.nextSibling, ``, [{ type: `id`, val: `BMS-instructions` }]);
-  const instructionsText = appendDomNode(`p`, instructions, `Uncheck the check boxes above to hide entire course from schedule.`);
-  instructionsText.appendChild(document.createElement(`br`));
-  instructionsText.appendChild(document.createTextNode(
-    `Click the extension icon for more functionalities (found in the top right corner of the Chrome interface).`,
-  ));
 }
 // Set courseName to either 'visible' or 'hidden'
 function showOrHideCourse(courseName, visibility) {
@@ -66,38 +60,10 @@ function showOrHideCourse(courseName, visibility) {
   }
 }
 
-// Inserts a DOM node before the given element
-function insertDomNode(tagName, insBeforeThisElem, text, selectors) {
-  const node = createDomNode(tagName, text, selectors);
-  insBeforeThisElem.parentNode.insertBefore(node, insBeforeThisElem);
-  return node;
-}
-
-// Appends a DOM node to the given parent
-function appendDomNode(tagName, parent, text, selectors) {
-  const node = createDomNode(tagName, text, selectors);
-  parent.appendChild(node);
-  return node;
-}
-
-function createDomNode(tagName, text, selectors) {
-  const elem = document.createElement(tagName);
-  if (selectors) {
-    for (const selector of selectors) {
-      elem[selector.type] = selector.val;
-    }
-  }
-  switch (tagName) {
-    case `p`:      elem.appendChild(document.createTextNode(text)); break;
-    case `button`: elem.innerHTML = text;                           break;
-    default:                                                        break;
-  }
-  return elem;
-}
-
 /* ****************************** HIDESPECIFICEVENT ****************************** */
 function hideSpecificEvent() {
   for (const event of ALL_COURSE_EVENTS) {
+    event.title = `Double click to hide from schedule`;
     event.addEventListener(`dblclick`, () => {
       event.style.visibility = `hidden`;
       setEventStateInChromeStorage(event, `hidden`);
@@ -131,6 +97,7 @@ function showAllEventsOfDay() {
   }
 }
 function showAllEventsOfDayOnClick(elem) {
+  elem.title = `Click here to show all events for this day`; /* eslint-disable-line no-param-reassign */
   elem.addEventListener(`click`, () => {
     const events = elem.parentNode.childNodes;
     // Starts from 2 as the first two elements are day of week and date - rest of the elements will be events
@@ -147,6 +114,7 @@ function changeSpecificEventTime() {
   for (const time of allCourseEventsTime) {
     const identifier = `${getUniqueEventIdentifier(time.parentNode)}_time`;
     const originaltext = time.innerText;
+    time.title = `Click to change time - Right click to revert`;
     // Let's user change time of event on click
     time.addEventListener(`click`, () => {
       const regEx = /\w+:([0-9][0-9] - [0-9][0-9]:[0-9][0-9])/;
@@ -188,6 +156,7 @@ function testTimeForSyntax(str) {
   return regEx.test(str);
 }
 
+/* ****************************** HIGHLIGHTDAY ****************************** */
 function highlightDay() {
   const dates = document.getElementsByClassName(`date`);
   let done = false;
