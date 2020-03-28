@@ -1,9 +1,8 @@
-const CUR_DATE = new Date();
-const COURSE_TABLE = document.getElementById(`kursustable`);
-const COURSE_TABLE_BODY = COURSE_TABLE.getElementsByTagName(`tbody`)[0].rows;
+const COURSE_TABLE      = document.getElementById(`kursustable`);
+// const SCHEDULE          = document.getElementById(`schedule`); // Unused for now
+const ALL_DAYS          = document.getElementsByClassName(`day`);
 const ALL_COURSE_EVENTS = document.getElementsByClassName(`event`);
-const SCHEDULE = document.getElementById(`schedule`);
-const ALL_DAYS = document.getElementsByClassName(`day`);
+const CUR_DATE = new Date();
 
 chrome.runtime.sendMessage({ todo: `showPageAction` });
 
@@ -13,17 +12,6 @@ showAllEventsOfDay(); // User can show all hidden events of a day by clicking on
 changeSpecificEventTime(); // User can change an events time by clicking on it
 getFromChromeStorage(); // Retrieves all values from chrome storage and applies them
 highlightDay(); // Highlights the current day
-
-// Do stuff on load
-if (document.readyState !== `loading`) {
-  initCode();
-}
-else {
-  document.addEventListener(`DOMContentLoaded`, () => {
-    initCode();
-  });
-}
-function initCode() {}
 
 // Skifter danebrog ud med et coronaflag på siden FIXME: Fjernes efter corona :D
 replaceDanebrog(); // FIXME: Fjernes efter corona :D
@@ -38,15 +26,16 @@ function replaceDanebrog() { // FIXME: Fjernes efter corona :D
 
 /* ***************************** ADDCOURSEOPTIONS ****************************** */
 function addCourseOptions() {
+  const courseTableBody = COURSE_TABLE.getElementsByTagName(`tbody`)[0].rows;
   // Adds checkboxes to "kursustable"
-  for (let i = 0; i < COURSE_TABLE_BODY.length; i++) {
-    const courseName = COURSE_TABLE_BODY[i].getElementsByTagName(`td`)[1].innerText;
+  for (let i = 0; i < courseTableBody.length; i++) {
+    const courseName = courseTableBody[i].getElementsByTagName(`td`)[1].innerText;
 
     // Create checkbox
     const checkbox = document.createElement(`input`);
     checkbox.type = `checkbox`;
     checkbox.classList.add(`BMS-checkbox`);
-    COURSE_TABLE_BODY[i].getElementsByTagName(`td`)[0].appendChild(checkbox);
+    courseTableBody[i].getElementsByTagName(`td`)[0].appendChild(checkbox);
     checkbox.checked = true;
     // Waits for a change of state in each checkbox
     checkbox.addEventListener(`change`, (e) => {
@@ -201,21 +190,26 @@ function testTimeForSyntax(str) {
 
 function highlightDay() {
   const dates = document.getElementsByClassName(`date`);
-  const todayDay = CUR_DATE.getDate();
   let done = false;
-  let i = 0;
-  while (!done) {
-    const dateDay = parseInt(dates[i].innerText.split(`/`)[0]);
-    if (dateDay === todayDay) {
+  let i = 1;
+  while (!done && dates[i] !== undefined) {
+    const dayDateArr = dates[i].innerText.split(`/`);
+    const dayDate = new Date(dayDateArr[2], dayDateArr[1] - 1, dayDateArr[0]);
+    if (sameDate(dayDate, CUR_DATE)) {
+      const todayElem = dates[i].parentNode;
+      todayElem.style.backgroundColor = `LightGray`;
+      changeDayHeight();
       done = true;
     }
     else {
       i++;
     }
   }
-  const todayElem = dates[i].parentNode;
-  todayElem.style.backgroundColor = `LightGray`;
-  changeDayHeight();
+}
+function sameDate(date1, date2) {
+  return date1.getDate() === date2.getDate()
+  && date1.getMonth() === date2.getMonth()
+  && date1.getFullYear() === date2.getFullYear();
 }
 // This function makes sure, that all days of the week has the same height, such that the highlight is homogenious
 function changeDayHeight() {
@@ -239,9 +233,11 @@ function getFromChromeStorage() {
 }
 
 function getCheckboxStateFromChromeStorage() {
-  for (let i = 0; i < COURSE_TABLE_BODY.length; i++) {
-    const courseName = COURSE_TABLE_BODY[i].getElementsByTagName(`td`)[1].innerText;
-    const checkbox = COURSE_TABLE_BODY[i].getElementsByTagName(`td`)[0].childNodes[0];
+  const courseTableBody = COURSE_TABLE.getElementsByTagName(`tbody`)[0].rows;
+
+  for (let i = 0; i < courseTableBody.length; i++) {
+    const courseName = courseTableBody[i].getElementsByTagName(`td`)[1].innerText;
+    const checkbox = courseTableBody[i].getElementsByTagName(`td`)[0].childNodes[0];
     // Get stored state for checkbox
     chrome.storage.sync.get([courseName], (result) => {
       if (result[courseName] === true) {
