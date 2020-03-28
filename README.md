@@ -12,3 +12,4 @@ Chrome Extension which enhances the public Moodle schedule
 - Make schedule prettier
 - Add events to the schedule with custom colors
 - Make event course material available from the schedule
+- Add option to optionspage: Color theme!
