@@ -191,25 +191,36 @@ function testTimeForSyntax(str) {
 function highlightDay() {
   const dates = document.getElementsByClassName(`date`);
   let done = false;
-  let i = 1;
-  while (!done && dates[i] !== undefined) {
+  let i = 0;
+  while (dates[i] !== undefined && !done) {
     const dayDateArr = dates[i].innerText.split(`/`);
     const dayDate = new Date(dayDateArr[2], dayDateArr[1] - 1, dayDateArr[0]);
-    if (sameDate(dayDate, CUR_DATE)) {
-      const todayElem = dates[i].parentNode;
-      todayElem.style.backgroundColor = `LightGray`;
-      changeDayHeight();
-      done = true;
-    }
-    else {
-      i++;
+    switch (compareDates(dayDate, CUR_DATE)) {
+      case -1: i++;         break;
+      case  1: done = true; break;
+      case  0:
+        dates[i].parentNode.style.backgroundColor = `LightGray`;
+        changeDayHeight();
+        done = true;
+        break;
+      default:
+        throw new Error(`compareDates() returned something funky.`);
     }
   }
 }
-function sameDate(date1, date2) {
-  return date1.getDate() === date2.getDate()
-  && date1.getMonth() === date2.getMonth()
-  && date1.getFullYear() === date2.getFullYear();
+/* Compares two dates by returning
+ * * -1 if date1 comes earlier than date2
+ * *  0 if the dates are the same
+ * *  1 if date1 comes later than date2
+ */
+function compareDates(date1, date2) {
+  if (date1.getDate() === date2.getDate()
+      && date1.getMonth() === date2.getMonth()
+      && date1.getFullYear() === date2.getFullYear()) {
+    return 0;
+  }
+
+  return date1 < date2 ? -1 : 1;
 }
 // This function makes sure, that all days of the week has the same height, such that the highlight is homogenious
 function changeDayHeight() {
