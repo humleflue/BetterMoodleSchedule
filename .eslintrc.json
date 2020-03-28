@@ -23,9 +23,9 @@
         "brace-style": ["error", "stroustrup"],                           // Håndhæver stroustrup reglen: https://eslint.org/docs/rules/brace-style#stroustrup
         "radix": ["error", "as-needed"],                                  // Tillader parseInt(var) uden radix-parameter
         "no-restricted-syntax": 0,                                        // Tillader for-in loops og andet "heavy weight stuff"
-        "max-len": 0,
-        "no-alert": 0,
-        "no-multi-spaces": 0,
+        "max-len": 0,                                                     // Tillader lange linjer kode
+        "no-alert": 0,                                                    // Tillader alerts
+        "no-multi-spaces": 0,                                             // Tillader formatering af kode med spaces
         "no-case-declarations": 0                                         // Allows declarations inside switch cases
     }
 }
