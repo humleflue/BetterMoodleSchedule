@@ -3,6 +3,7 @@ const COURSE_TABLE = document.getElementById(`kursustable`);
 const COURSE_TABLE_BODY = COURSE_TABLE.getElementsByTagName(`tbody`)[0].rows;
 const ALL_COURSE_EVENTS = document.getElementsByClassName(`event`);
 const SCHEDULE = document.getElementById(`schedule`);
+const ALL_DAYS = document.getElementsByClassName(`day`);
 
 chrome.runtime.sendMessage({ todo: `showPageAction` });
 
@@ -22,15 +23,7 @@ else {
     initCode();
   });
 }
-function initCode() {
-  if (decodeURIComponent(window.location.hash) === `#restore schedule`) { // Display a confirmation message that original schedule has been restored
-    const resetMsgElem = insertDomNode(`p`, SCHEDULE, `Your Moodle Schedule has been restored to original.`, [{ type: `id`, val: `BMS-reset` }]);
-    window.location.hash = ``;
-    setTimeout(() => {
-      resetMsgElem.style.opacity = `0`;
-    }, 4000);
-  }
-}
+function initCode() {}
 
 // Skifter danebrog ud med et coronaflag på siden FIXME: Fjernes efter corona :D
 replaceDanebrog(); // FIXME: Fjernes efter corona :D
@@ -74,14 +67,6 @@ function addCourseOptions() {
   instructionsText.appendChild(document.createTextNode(
     `Click the extension icon for more functionalities (found in the top right corner of the Chrome interface).`,
   ));
-  // Adds a button which resets chrome.storage underneath the instructions
-  const resetBtn = insertDomNode(`button`, instructions.nextSibling, `Restore original schedule`);
-  resetBtn.onclick = () => {
-    chrome.storage.sync.clear();
-    chrome.storage.local.clear();
-    window.location.hash = encodeURIComponent(`restore schedule`);
-    window.location.reload(true);
-  };
 }
 // Set courseName to either 'visible' or 'hidden'
 function showOrHideCourse(courseName, visibility) {
@@ -151,8 +136,7 @@ function getChildNodeIndex(child) {
 
 /* ****************************** SHOWALLEVENTSOFDAY ****************************** */
 function showAllEventsOfDay() {
-  const allDays = document.getElementsByClassName(`day`);
-  for (const day of allDays) {
+  for (const day of ALL_DAYS) {
     showAllEventsOfDayOnClick(day.childNodes[0]);
     showAllEventsOfDayOnClick(day.childNodes[1]);
   }
@@ -231,6 +215,20 @@ function highlightDay() {
   }
   const todayElem = dates[i].parentNode;
   todayElem.style.backgroundColor = `LightGray`;
+  changeDayHeight();
+}
+// This function makes sure, that all days of the week has the same height, such that the highlight is homogenious
+function changeDayHeight() {
+  let weekMaxHeight = 0;
+  for (let i = 0; i < ALL_DAYS.length; i++) {
+    weekMaxHeight = Math.max(ALL_DAYS[i].clientHeight, weekMaxHeight);
+    if (i % 7 === 6) {
+      for (let j = i - 6; j <= i; j++) {
+        ALL_DAYS[j].style.minHeight = `${weekMaxHeight}px`;
+      }
+      weekMaxHeight = 0;
+    }
+  }
 }
 
 /* ****************************** GETFROMCHROMESTORAGE ****************************** */
