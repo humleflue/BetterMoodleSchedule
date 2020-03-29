@@ -1,14 +1,21 @@
+const COURSE_TABLE      = document.getElementById(`kursustable`);
+// const SCHEDULE          = document.getElementById(`schedule`); // Unused for now
+const ALL_DAYS          = document.getElementsByClassName(`day`);
+const ALL_COURSE_EVENTS = document.getElementsByClassName(`event`);
+const CUR_DATE = new Date();
 
 innerHTMLReplace(".event", /Time: /, "");//🕒
 innerHTMLReplace(".event", /Location: /, "");//📍
 innerHTMLReplace(".event", /Note: /, "");//📄
 
 chrome.runtime.sendMessage({ todo: `showPageAction` });
+
 addCourseOptions(); // Adds option to hide all events of a course
 hideSpecificEvent(); // User can hide specific event by doubleclicking
 showAllEventsOfDay(); // User can show all hidden events of a day by clicking on the date or the day of the week
 changeSpecificEventTime(); // User can change an events time by clicking on it
 getFromChromeStorage(); // Retrieves all values from chrome storage and applies them
+highlightDay(); // Highlights the current day
 
 addCourseAliasInputs();
 updateCourseNames();
@@ -108,18 +115,17 @@ function addCourseAliasInputs(){
 
 /* ***************************** ADDCOURSEOPTIONS ****************************** */
 function addCourseOptions() {
-  const courseTable = document.getElementById(`kursustable`);
-  const optionsBody = courseTable.getElementsByTagName(`tbody`)[0].rows;
-
+  const courseTableBody = COURSE_TABLE.getElementsByTagName(`tbody`)[0].rows;
   // Adds checkboxes to "kursustable"
-  for (let i = 0; i < optionsBody.length; i++) {
-    const courseName = optionsBody[i].getElementsByTagName(`td`)[1].innerText;
+  for (let i = 0; i < courseTableBody.length; i++) {
+    const courseName = courseTableBody[i].getElementsByTagName(`td`)[1].innerText;
 
     // Create checkbox
     const checkbox = document.createElement(`input`);
     checkbox.type = `checkbox`;
+    checkbox.title = `Uncheck to hide course from schedule`;
     checkbox.classList.add(`BMS-checkbox`);
-    optionsBody[i].getElementsByTagName(`td`)[0].appendChild(checkbox);
+    courseTableBody[i].getElementsByTagName(`td`)[0].appendChild(checkbox);
     checkbox.checked = true;
     // Waits for a change of state in each checkbox
     checkbox.addEventListener(`change`, (e) => {
@@ -133,36 +139,10 @@ function addCourseOptions() {
       }
     });
   }
-  // Adds instructions underneath table
-  const para = document.createElement(`p`);
-  const instructionsText = document.createTextNode(`Uncheck the check boxes above to hide entire course from schedule.\
-                                                  Click the extension icon for more functionalities (found in the top right corner of the Chrome interface).`);
-  para.appendChild(instructionsText);
-  para.id = `BMS-instructions`;
-  const instructions = courseTable.parentNode.insertBefore(para, courseTable.nextSibling);
-  // Adds a button which resets chrome.storage underneath the instructions
-  const btn = document.createElement(`button`);
-  btn.innerHTML = `Restore original schedule`;
-  const resetBtn = instructions.parentNode.insertBefore(btn, instructions.nextSibling);
-  resetBtn.onclick = () => {
-    chrome.storage.sync.clear();
-    chrome.storage.local.clear();
-    // Display a confirmation message
-    const resetMsgP = document.createElement(`p`);
-    const resetMsgText = document.createTextNode(`Your Moodle Schedule has been restored to original. Reload the page to see the effects.`);
-    const resetMsgElem = resetMsgP.appendChild(resetMsgText);
-    resetMsgP.id = `BMS-reset`;
-    resetBtn.parentNode.insertBefore(resetMsgP, resetBtn.nextSibling);
-    setTimeout(() => {
-      resetMsgElem.remove();
-    }, 5000);
-  };
 }
 // Set courseName to either 'visible' or 'hidden'
 function showOrHideCourse(courseName, visibility) {
-  const allCourseEvents = document.getElementsByClassName(`event`);
-
-  for (const event of allCourseEvents) {
+  for (const event of ALL_COURSE_EVENTS) {
     if (event.getElementsByTagName(`a`)[0].text === courseName) {
       event.style.visibility = visibility;
     }
@@ -171,8 +151,8 @@ function showOrHideCourse(courseName, visibility) {
 
 /* ****************************** HIDESPECIFICEVENT ****************************** */
 function hideSpecificEvent() {
-  const allCourseEvents = document.getElementsByClassName(`event`);
-  for (const event of allCourseEvents) {
+  for (const event of ALL_COURSE_EVENTS) {
+    event.title = `Double click to hide from schedule`;
     event.addEventListener(`dblclick`, () => {
       event.style.visibility = `hidden`;
       setEventStateInChromeStorage(event, `hidden`);
@@ -190,7 +170,9 @@ function getUniqueEventIdentifier(event) {
 }
 function getChildNodeIndex(child) {
   let i = 0;
-  while ((child = child.previousSibling) != null) {
+  let elem = child.previousSibling;
+  while (elem != null) {
+    elem = elem.previousSibling;
     i++;
   }
   return i;
@@ -198,13 +180,13 @@ function getChildNodeIndex(child) {
 
 /* ****************************** SHOWALLEVENTSOFDAY ****************************** */
 function showAllEventsOfDay() {
-  const allDays = document.getElementsByClassName(`day`);
-  for (const day of allDays) {
+  for (const day of ALL_DAYS) {
     showAllEventsOfDayOnClick(day.childNodes[0]);
     showAllEventsOfDayOnClick(day.childNodes[1]);
   }
 }
 function showAllEventsOfDayOnClick(elem) {
+  elem.title = `Click here to show all events for this day`; /* eslint-disable-line no-param-reassign */
   elem.addEventListener(`click`, () => {
     const events = elem.parentNode.childNodes;
     // Starts from 2 as the first two elements are day of week and date - rest of the elements will be events
@@ -221,9 +203,10 @@ function changeSpecificEventTime() {
   for (const time of allCourseEventsTime) {
     const identifier = `${getUniqueEventIdentifier(time.parentNode)}_time`;
     const originaltext = time.innerText;
+    time.title = `Click to change time - Right click to revert`;
     // Let's user change time of event on click
     time.addEventListener(`click`, () => {
-      const regEx = /\w+:(\w+ - \w+:\w+)/;
+      const regEx = /\w+:([0-9][0-9] - [0-9][0-9]:[0-9][0-9])/;
       const eventTime = regEx.exec(time.innerText)[0]; // Gets the time of the event to use in the prompt
       let done = false;
       let wantedTime = prompt(`Enter new time of event:`, eventTime);
@@ -262,6 +245,55 @@ function testTimeForSyntax(str) {
   return regEx.test(str);
 }
 
+/* ****************************** HIGHLIGHTDAY ****************************** */
+function highlightDay() {
+  const dates = document.getElementsByClassName(`date`);
+  let done = false;
+  let i = 0;
+  while (dates[i] !== undefined && !done) {
+    const dayDateArr = dates[i].innerText.split(`/`);
+    const dayDate = new Date(dayDateArr[2], dayDateArr[1] - 1, dayDateArr[0]);
+    switch (compareDates(dayDate, CUR_DATE)) {
+      case -1: i++;         break;
+      case  1: done = true; break;
+      case  0:
+        dates[i].parentNode.style.backgroundColor = `LightGray`;
+        changeDayHeight();
+        done = true;
+        break;
+      default:
+        throw new Error(`compareDates() returned something funky.`);
+    }
+  }
+}
+/* Compares two dates by returning
+ * * -1 if date1 comes earlier than date2
+ * *  0 if the dates are the same
+ * *  1 if date1 comes later than date2
+ */
+function compareDates(date1, date2) {
+  if (date1.getDate() === date2.getDate()
+      && date1.getMonth() === date2.getMonth()
+      && date1.getFullYear() === date2.getFullYear()) {
+    return 0;
+  }
+
+  return date1 < date2 ? -1 : 1;
+}
+// This function makes sure, that all days of the week has the same height, such that the highlight is homogenious
+function changeDayHeight() {
+  let weekMaxHeight = 0;
+  for (let i = 0; i < ALL_DAYS.length; i++) {
+    weekMaxHeight = Math.max(ALL_DAYS[i].clientHeight, weekMaxHeight);
+    if (i % 7 === 6) {
+      for (let j = i - 6; j <= i; j++) {
+        ALL_DAYS[j].style.minHeight = `${weekMaxHeight}px`;
+      }
+      weekMaxHeight = 0;
+    }
+  }
+}
+
 /* ****************************** GETFROMCHROMESTORAGE ****************************** */
 function getFromChromeStorage() {
   getCheckboxStateFromChromeStorage();
@@ -270,12 +302,11 @@ function getFromChromeStorage() {
 }
 
 function getCheckboxStateFromChromeStorage() {
-  const courseTable = document.getElementById(`kursustable`);
-  const optionsBody = courseTable.getElementsByTagName(`tbody`)[0].rows;
+  const courseTableBody = COURSE_TABLE.getElementsByTagName(`tbody`)[0].rows;
 
-  for (let i = 0; i < optionsBody.length; i++) {
-    const courseName = optionsBody[i].getElementsByTagName(`td`)[1].innerText;
-    const checkbox = optionsBody[i].getElementsByTagName(`td`)[0].childNodes[0];
+  for (let i = 0; i < courseTableBody.length; i++) {
+    const courseName = courseTableBody[i].getElementsByTagName(`td`)[1].innerText;
+    const checkbox = courseTableBody[i].getElementsByTagName(`td`)[0].childNodes[0];
     // Get stored state for checkbox
     chrome.storage.sync.get([courseName], (result) => {
       if (result[courseName] === true) {
@@ -290,8 +321,7 @@ function getCheckboxStateFromChromeStorage() {
   }
 }
 function getEventStatesFromChromeStorage() {
-  const allCourseEvents = document.getElementsByClassName(`event`);
-  for (const event of allCourseEvents) {
+  for (const event of ALL_COURSE_EVENTS) {
     const identifier = `${getUniqueEventIdentifier(event)}_state`;
     chrome.storage.sync.get([identifier], (result) => {
       const state = result[identifier];
