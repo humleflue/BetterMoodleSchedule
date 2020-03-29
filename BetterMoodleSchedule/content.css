@@ -8,19 +8,15 @@
 }
 
 /* BetterMoodleSchedule (BMS) element styles */
-#BMS-instructions {
-    font-style: italic;
-    color: #888;
+#tUpcomingEvent {
+    border: 1px solid black;
 }
-#BMS-reset {
-    color: red;
-    /* This will make any change of opacity to your item fade by 1000ms. */
-    opacity: 1;
-    -webkit-transition: opacity 1000ms linear;
-    transition: opacity 1000ms linear;
+
+#tUpcomingEvent > thead {
+    font-weight: bold;
 }
-/* Checkbox body */
-.BMS-checkbox {
-    text-align: center;
-    vertical-align: middle;
+
+#tUpcomingEvent > tbody > tr > td {
+    border: 1px solid black;
+    border-collapse: collapse;
 }
