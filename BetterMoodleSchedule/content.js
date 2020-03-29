@@ -7,9 +7,9 @@ const ALL_COURSE_EVENTS = document.getElementsByClassName(`event`);
 const CUR_DATE = new Date();
 
 /* BODY */
-innerHTMLReplace(".event", /Time: /, "");//🕒
-innerHTMLReplace(".event", /Location: /, "");//📍
-innerHTMLReplace(".event", /Note: /, "");//📄
+innerHTMLReplace(`.event`, /Time: /, ``);// 🕒
+innerHTMLReplace(`.event`, /Location: /, ``);// 📍
+innerHTMLReplace(`.event`, /Note: /, ``);// 📄
 
 chrome.runtime.sendMessage({ todo: `showPageAction` });
 
@@ -17,102 +17,102 @@ addCourseOptions(); // Adds option to hide all events of a course
 hideSpecificEvent(); // User can hide specific event by doubleclicking
 showAllEventsOfDay(); // User can show all hidden events of a day by clicking on the date or the day of the week
 changeSpecificEventTime(); // User can change an events time by clicking on it
-highlightDay(CUR_DATE); // Highlights the current day
 getFromChromeStorage(); // Retrieves all values from chrome storage and applies them
 
 addCourseAliasInputs();
 updateCourseNames();
 
-function updateCourseNames(){
-  const courseTable = document.querySelectorAll("#kursustable tr");
+function updateCourseNames() {
+  const courseTable = document.querySelectorAll(`#kursustable tr`);
 
-  for(let i = 1; i < courseTable.length; ++i){
-    let course = courseTable[i];
-    let alias = course.querySelector("td+td+td>input").value;
+  for (let i = 1; i < courseTable.length; ++i) {
+    const course = courseTable[i];
+    const alias = course.querySelector(`td+td+td>input`).value;
 
-    updateCourseName(course.querySelector("td+td").innerHTML, alias);
+    updateCourseName(course.querySelector(`td+td`).innerHTML, alias);
   }
 }
 
-function updateCourseName(courseName, alias){
-  const classNames = document.querySelectorAll("div.event a.courseName");
-  for(let className of classNames){
-    if(className.innerHTML === courseName){
+function updateCourseName(courseName, alias) {
+  const classNames = document.querySelectorAll(`div.event a.courseName`);
+  for (const className of classNames) {
+    if (className.innerHTML === courseName) {
       className.nextSibling.innerHTML = alias;
     }
   }
 }
 
-function innerHTMLReplace(element, search, replace){
-  if(typeof element === "string"){
+function innerHTMLReplace(element, search, replace) {
+  if (typeof element === `string`) {
     element = document.querySelectorAll(element);
-    for(let el of element){
+    for (const el of element) {
       el.innerHTML = el.innerHTML.replace(search, replace);
     }
   }
-  else{
+  else {
     element.innerHTML = element.innerHTML.replace(search, replace);
   }
 }
 
-function addCourseAliasInputs(){
-  let courseRows = document.querySelectorAll("table#kursustable tr");
-  
-  //Start from 1 to avoid the "Courses" row
-  for(let i = 1; i < courseRows.length; ++i){
-    //Get the course row
-    let tr = courseRows[i];
-    //Create new table cell with a text input element inside
-    let td = document.createElement("td");
-    td.innerHTML = "<input type=\"text\">";
-    let courseName = tr.childNodes[1].innerHTML;
-    let courseAlias = courseName.match(/\([A-Z]+\)/);
+function addCourseAliasInputs() {
+  const courseRows = document.querySelectorAll(`table#kursustable tr`);
+
+  // Start from 1 to avoid the "Courses" row
+  for (let i = 1; i < courseRows.length; ++i) {
+    // Get the course row
+    const tr = courseRows[i];
+    // Create new table cell with a text input element inside
+    const td = document.createElement(`td`);
+    td.innerHTML = `<input type="text">`;
+    const courseName = tr.childNodes[1].innerHTML;
+    const courseAlias = courseName.match(/\([A-Z]+\)/);
     td.childNodes[0].value = courseAlias ? courseAlias[0].match(/[A-Z]+/)[0] : courseName.match(/[a-zA-Z]+/g)[1];
-    //Add new table cell at the end of the row
+    // Add new table cell at the end of the row
     tr.appendChild(td);
 
-    //Get the saved alias' and update when loaded if they exist
-    chrome.storage.sync.get([courseName+"_alias"], (result) => {
-      if(Object.keys(result).length > 0){
-        let key = Object.keys(result)[0];
-        let courseRows = document.querySelectorAll("table#kursustable tr");
+    // Get the saved alias' and update when loaded if they exist
+    chrome.storage.sync.get([`${courseName}_alias`], (result) => {
+      if (Object.keys(result).length > 0) {
+        const key = Object.keys(result)[0];
+        const courseRows = document.querySelectorAll(`table#kursustable tr`);
         console.log(key);
-        //Start from 1 to avoid the "Courses" row
-        for(let i = 1; i < courseRows.length; ++i){
-          //Get the course row
-          let tr = courseRows[i];
-          //If it is the matching course
-          if(key.indexOf(tr.childNodes[1].innerHTML) !== -1){
-            //Update alias input and course name
+        // Start from 1 to avoid the "Courses" row
+        for (let i = 1; i < courseRows.length; ++i) {
+          // Get the course row
+          const tr = courseRows[i];
+          // If it is the matching course
+          if (key.indexOf(tr.childNodes[1].innerHTML) !== -1) {
+            // Update alias input and course name
             tr.childNodes[2].childNodes[0].value = result[key];
             updateCourseName(tr.childNodes[1].innerHTML, result[key]);
             break;
-          } 
+          }
         }
       }
     });
   }
 
-  const classNames = document.querySelectorAll("div.event a");
-  for(let className of classNames){
-    //Insert new a after original a
-    className.parentNode.insertBefore(document.createElement("a"), className.nextSibling);
-    className.nextSibling.setAttribute("href", className.getAttribute("href"));
-    className.nextSibling.setAttribute("class", "alias");
-    className.setAttribute("class", "courseName");
-    
-    //Hide original <a> used for searching for courses when hidden/showing
-    className.style.display = "none";
+  const classNames = document.querySelectorAll(`div.event a`);
+  for (const className of classNames) {
+    // Insert new a after original a
+    className.parentNode.insertBefore(document.createElement(`a`), className.nextSibling);
+    className.nextSibling.setAttribute(`href`, className.getAttribute(`href`));
+    className.nextSibling.setAttribute(`class`, `alias`);
+    className.setAttribute(`class`, `courseName`);
+
+    // Hide original <a> used for searching for courses when hidden/showing
+    className.style.display = `none`;
   }
 
-  //Add event listener to alias input field to update course names if updated
-  for(let aliasInput of document.querySelectorAll("td+td+td>input")){
-    aliasInput.addEventListener("input", (event) => {
+  // Add event listener to alias input field to update course names if updated
+  for (const aliasInput of document.querySelectorAll(`td+td+td>input`)) {
+    aliasInput.addEventListener(`input`, (event) => {
       updateCourseName(event.target.parentNode.previousSibling.innerHTML, event.target.value);
-      //Save new alias
+      // Save new alias
       chrome.storage.sync.set({ [`${event.target.parentNode.previousSibling.innerHTML}_alias`]: event.target.value });
     });
   }
+  highlightDay(CUR_DATE); // Highlights the current day
 }
 
 
