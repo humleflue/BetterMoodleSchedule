@@ -26,6 +26,7 @@
         "max-len": 0,                                                     // Tillader lange linjer kode
         "no-alert": 0,                                                    // Tillader alerts
         "no-multi-spaces": 0,                                             // Tillader formatering af kode med spaces
-        "no-case-declarations": 0                                         // Allows declarations inside switch cases
+        "no-case-declarations": 0,                                        // Allows declarations inside switch cases
+        "class-methods-use-this": 0                                       // Tillader at man ikke bruger this i class methods
     }
 }

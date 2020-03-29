@@ -1,9 +1,12 @@
+/* HEAD */
+
 const COURSE_TABLE      = document.getElementById(`kursustable`);
 // const SCHEDULE          = document.getElementById(`schedule`); // Unused for now
 const ALL_DAYS          = document.getElementsByClassName(`day`);
 const ALL_COURSE_EVENTS = document.getElementsByClassName(`event`);
 const CUR_DATE = new Date();
 
+/* BODY */
 innerHTMLReplace(".event", /Time: /, "");//🕒
 innerHTMLReplace(".event", /Location: /, "");//📍
 innerHTMLReplace(".event", /Note: /, "");//📄
@@ -14,8 +17,8 @@ addCourseOptions(); // Adds option to hide all events of a course
 hideSpecificEvent(); // User can hide specific event by doubleclicking
 showAllEventsOfDay(); // User can show all hidden events of a day by clicking on the date or the day of the week
 changeSpecificEventTime(); // User can change an events time by clicking on it
+highlightDay(CUR_DATE); // Highlights the current day
 getFromChromeStorage(); // Retrieves all values from chrome storage and applies them
-highlightDay(); // Highlights the current day
 
 addCourseAliasInputs();
 updateCourseNames();
@@ -168,12 +171,14 @@ function getUniqueEventIdentifier(event) {
   const date = event.parentNode.childNodes[1].innerText;
   return `${date}: Event NO${index}`;
 }
-function getChildNodeIndex(child) {
+function getChildNodeIndex(child, ofSameClass = false) {
   let i = 0;
   let elem = child.previousSibling;
-  while (elem != null) {
+  while (elem !== null) {
     elem = elem.previousSibling;
-    i++;
+    if (!ofSameClass || (elem !== null && elem.className === child.className)) {
+      i++;
+    }
   }
   return i;
 }
@@ -246,25 +251,31 @@ function testTimeForSyntax(str) {
 }
 
 /* ****************************** HIGHLIGHTDAY ****************************** */
-function highlightDay() {
+function highlightDay(day) {
+  const dayElem = getDayElem(day);
+  if (dayElem) {
+    dayElem.style.backgroundColor = `LightGray`;
+    changeAllDaysOfWeekHeight(dayElem);
+  }
+}
+function getDayElem(day) {
   const dates = document.getElementsByClassName(`date`);
   let done = false;
   let i = 0;
   while (dates[i] !== undefined && !done) {
-    const dayDateArr = dates[i].innerText.split(`/`);
-    const dayDate = new Date(dayDateArr[2], dayDateArr[1] - 1, dayDateArr[0]);
-    switch (compareDates(dayDate, CUR_DATE)) {
-      case -1: i++;         break;
-      case  1: done = true; break;
-      case  0:
-        dates[i].parentNode.style.backgroundColor = `LightGray`;
-        changeDayHeight();
-        done = true;
-        break;
-      default:
-        throw new Error(`compareDates() returned something funky.`);
+    const dayDate = convertDateToDate(dates[i].innerText);
+    switch (compareDates(dayDate, day)) {
+      case -1: i++;                 break; // The date being checked is lower than today's date
+      case  1: done = true;         break; // The day being checked is in the future
+      case  0: return dates[i].parentNode; // The day being checked is today's date
+      default: throw new Error(`compareDates() returned something funky.`);
     }
   }
+  return undefined;
+}
+function convertDateToDate(date) {
+  const dayDateArr = date.split(`/`);
+  return new Date(dayDateArr[2], dayDateArr[1] - 1, dayDateArr[0]);
 }
 /* Compares two dates by returning
  * * -1 if date1 comes earlier than date2
@@ -281,9 +292,14 @@ function compareDates(date1, date2) {
   return date1 < date2 ? -1 : 1;
 }
 // This function makes sure, that all days of the week has the same height, such that the highlight is homogenious
-function changeDayHeight() {
+function changeAllDaysOfWeekHeight(dayElem) {
+  const dayDate = convertDateToDate(dayElem.querySelector(`.date`).innerText);
+  const dayDayOfWeek = (dayDate.getDay() + 6) % 7; // Monday = 0 and sunday = 6
+  const monday = ALL_DAYS[getChildNodeIndex(dayElem, true) - dayDayOfWeek];
+  const mondayIndex = getChildNodeIndex(monday, true);
+
   let weekMaxHeight = 0;
-  for (let i = 0; i < ALL_DAYS.length; i++) {
+  for (let i = mondayIndex; i < mondayIndex + 7; i++) {
     weekMaxHeight = Math.max(ALL_DAYS[i].clientHeight, weekMaxHeight);
     if (i % 7 === 6) {
       for (let j = i - 6; j <= i; j++) {
