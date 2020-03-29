@@ -1,4 +1,8 @@
 
+innerHTMLReplace(".event", /Time: /, "");//🕒
+innerHTMLReplace(".event", /Location: /, "");//📍
+innerHTMLReplace(".event", /Note: /, "");//📄
+
 chrome.runtime.sendMessage({ todo: `showPageAction` });
 addCourseOptions(); // Adds option to hide all events of a course
 hideSpecificEvent(); // User can hide specific event by doubleclicking
@@ -6,10 +10,6 @@ showAllEventsOfDay(); // User can show all hidden events of a day by clicking on
 changeSpecificEventTime(); // User can change an events time by clicking on it
 getFromChromeStorage(); // Retrieves all values from chrome storage and applies them
 
-
-innerHTMLReplace(".event", /Time: /, "");//🕒
-innerHTMLReplace(".event", /Location: /, "");//📍
-innerHTMLReplace(".event", /Note: /, "");//📄
 addCourseAliasInputs();
 updateCourseNames();
 
