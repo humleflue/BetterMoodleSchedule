@@ -22,7 +22,7 @@
   "content_scripts":[
     {
       "matches": ["https://www.moodle.aau.dk/calmoodle/public/*"],
-      "js": ["content.js", "content/displayUpcomingEvent.js"],
+      "js": ["content.js"],
       "css": ["content.css"]
     }
   ],
