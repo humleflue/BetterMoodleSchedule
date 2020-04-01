@@ -21,6 +21,10 @@ div.event{
   border-width: 1px;
   border-color: black;
   box-shadow: 0 1mm 2mm -0.5mm black;
+  transition: transform .2s; /* Animation */
+}
+div.event:hover{
+  transform: scale(1.02); /* 102% zoom */
 }
 div.event > div{
   padding: 1mm 0;
