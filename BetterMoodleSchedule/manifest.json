@@ -3,31 +3,39 @@
 
   "name": "BetterMoodleSchedule",
   "description": "This extension adds some nice funktionalities to your AAU Moodle Schedule!",
-  "version": "1.32",
+  "version": "2.0",
   "icons": {
-    "128": "icon128.png",
-    "48": "icon48.png",
-    "16": "icon16.png"
+    "128": "icons/icon128.png",
+    "48": "icons/icon48.png",
+    "16": "icons/icon16.png"
   },
 
   "page_action": {
-    "default_icon": "icon16.png",
-    "default_popup": "popup.html",
+    "default_icon": "icons/icon16.png",
+    "default_popup": "popup/popup.html",
     "default_title": "BetterMoodleSchedule"
   },
   "background": {
-    "scripts": ["eventPage.js"],
+    "scripts": ["background/eventPage.js"],
     "persistent": false
   },
   "content_scripts":[
     {
       "matches": ["https://www.moodle.aau.dk/calmoodle/public/*"],
-      "js": ["content.js"],
-      "css": ["content.css"]
+      "js": [
+        "content/js/helperFunctions.js",
+        "content/js/sendMessage.js",
+        "content/js/events.js",
+        "content/js/kursustable.js",
+        "content/js/highlightDay.js"
+      ],
+      "css": [
+        "content/css/content.css"
+      ]
     }
   ],
   "options_ui": {
-    "page": "options.html",
+    "page": "options/options.html",
     "chrome_style": true
   },
   

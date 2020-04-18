@@ -27,6 +27,8 @@
         "no-alert": 0,                                                    // Tillader alerts
         "no-multi-spaces": 0,                                             // Tillader formatering af kode med spaces
         "no-case-declarations": 0,                                        // Allows declarations inside switch cases
-        "class-methods-use-this": 0                                       // Tillader at man ikke bruger this i class methods
+        "class-methods-use-this": 0,                                      // Tillader at man ikke bruger this i class methods
+        "no-undef": 0,                                                    // Tillader at man ikke bruger definerede funktioner (da vores content-filer er spredt ud)
+        "no-loop-func": 0                                                 // Samme som ovenstående.
     }
 }
