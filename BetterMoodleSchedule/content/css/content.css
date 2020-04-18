@@ -1,0 +1,8 @@
+.aalborg_title {
+    color: red;
+    font-family: "Comic Sans MS";
+}
+
+#kursustable > thead {
+    font-weight: bold;
+}
