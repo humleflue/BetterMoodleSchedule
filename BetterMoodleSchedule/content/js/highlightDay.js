@@ -1,13 +1,10 @@
-// Timeout has to be applied to make sure theme is loaded - FIXME: Ikke optimalt (Lasse)
-setTimeout(() => {
-  highlightDay(new Date()); // Highlights the current day
-}, 5);
-
+// Timeout has to be applied to make sure theme is loaded
+highlightDay(new Date()); // Highlights the current day
 function highlightDay(day) {
   const dayElem = getDayElem(day);
   if (dayElem) {
     dayElem.style.backgroundColor = `LightGray`;
-    changeDayHeight(dayElem);
+    dayElem.style.minHeight = `${getWeekMaxHeight(dayElem)}px`;
   }
 }
 function getDayElem(day) {
@@ -19,7 +16,7 @@ function getDayElem(day) {
     switch (compareDates(dayDate, day)) {
       case -1: i++;                 break; // The date being checked is lower than today's date
       case  1: done = true;         break; // The day being checked is in the future
-      case  0: return dates[i].parentNode; // The day being checked is today's date
+      case  0: return dates[i].parentNode; // The day being checked is today's date - the event is returned
       default: throw new Error(`compareDates() returned something funky.`);
     }
   }
@@ -41,7 +38,6 @@ function compareDates(date1, date2) {
 
   return date1 < date2 ? -1 : 1;
 }
-
 // Returns true if dates are the same
 function sameDate(date1, date2) {
   return (date1.getDate()     === date2.getDate()
@@ -51,7 +47,7 @@ function sameDate(date1, date2) {
 }
 
 // This function makes sure, that the given day has the same height as other days of the week
-function changeDayHeight(dayElem) {
+function getWeekMaxHeight(dayElem) {
   const dayDate = convertDateToDate(dayElem.querySelector(`.date`).innerText);
   const dayDayOfWeek = (dayDate.getDay() + 6) % 7; // Monday = 0 and sunday = 6
   const allDays = document.getElementsByClassName(`day`);
@@ -62,5 +58,5 @@ function changeDayHeight(dayElem) {
   for (let i = mondayIndex; i < mondayIndex + 7; i++) {
     weekMaxHeight = Math.max(allDays[i].clientHeight, weekMaxHeight);
   }
-  dayElem.style.minHeight = `${weekMaxHeight}px`;
+  return weekMaxHeight;
 }
