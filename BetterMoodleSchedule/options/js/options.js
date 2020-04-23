@@ -21,7 +21,8 @@ restoreBtn.onclick = () => {
 };
 // Restores options.html to original state
 function restoreOptionsPage() {
-  harmonicThemeCheckbox.checked = false;
+  harmonicThemeCheckbox.checked = true;
+  darkThemeCheckbox.checked = true;
 }
 
 // Get and set stored state for checkbox
@@ -41,6 +42,28 @@ harmonicThemeCheckbox.addEventListener(`change`, (event) => {
   }
   else {
     chrome.storage.sync.set({ harmonicThemeCheckbox: false });
+    updateStatus(`Theme disabled. Reload the Moodle Schedule to see the effects.`);
+  }
+});
+
+
+// Get and set stored state for checkbox
+chrome.storage.sync.get([`darkThemeCheckbox`], (result) => {
+  if (result.darkThemeCheckbox === true) {
+    darkThemeCheckbox.checked = true;
+  }
+  else if (result.darkThemeCheckbox === false) {
+    darkThemeCheckbox.checked = false;
+  }
+});
+// Enables/disables the Dark Theme. TODO: Enable emoji-indicator control
+darkThemeCheckbox.addEventListener(`change`, (event) => {
+  if (event.target.checked) {
+    chrome.storage.sync.set({ darkThemeCheckbox: true });
+    updateStatus(`Theme enabled! Reload the Moodle Schedule to see the effects.`);
+  }
+  else {
+    chrome.storage.sync.set({ darkThemeCheckbox: false });
     updateStatus(`Theme disabled. Reload the Moodle Schedule to see the effects.`);
   }
 });

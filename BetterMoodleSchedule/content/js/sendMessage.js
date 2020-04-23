@@ -13,3 +13,15 @@ chrome.storage.sync.get([`harmonicThemeCheckbox`], (result) => {
     });
   }
 });
+
+chrome.storage.sync.get([`darkThemeCheckbox`], (result) => {
+  if (result.darkThemeCheckbox === true) {
+    chrome.runtime.sendMessage({ todo: `darkTheme`, useTheme: true }, (res) => {
+      if (res && res.cssApplied) {
+        setTimeout(() => { // FIXME: Still not optimal, but it works for now...
+          highlightDay(new Date());
+        }, 60);
+      }
+    });
+  }
+});

@@ -3,7 +3,7 @@ highlightDay(new Date()); // Highlights the current day
 function highlightDay(day) {
   const dayElem = getDayElem(day);
   if (dayElem) {
-    dayElem.style.backgroundColor = `LightGray`;
+    dayElem.style.backgroundColor = "#36393e";//`LightGray`;
     dayElem.style.minHeight = `${getWeekMaxHeight(dayElem)}px`;
   }
 }

@@ -15,6 +15,12 @@ chrome.runtime.onMessage.addListener((request, sender, sendResponse) => { // Ext
         chrome.tabs.insertCSS({ file: `content/css/harmonicTheme.css` }, sendResponse({ cssApplied: true }));
       }
       break;
+    case `darkTheme`:
+      if (request.useTheme) {
+        //chrome.tabs.executeScript({ file: `content/js/darkTheme.js` });
+        chrome.tabs.insertCSS({ file: `content/css/darkTheme.css` }, sendResponse({ cssApplied: true }));
+      }
+      break;
     default:
       throw new Error(`SWITCH ERROR: "${request.todo}" is not defined`);
   }
