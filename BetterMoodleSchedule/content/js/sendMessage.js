@@ -7,7 +7,7 @@ chrome.storage.sync.get([`harmonicThemeCheckbox`], (result) => {
     chrome.runtime.sendMessage({ todo: `harmonicTheme`, useTheme: true }, (res) => {
       if (res && res.cssApplied) {
         setTimeout(() => { // FIXME: Still not optimal, but it works for now...
-          highlightDay(new Date());
+          highlightDay(new Date(), `LightGray`);
         }, 60);
       }
     });
@@ -19,8 +19,8 @@ chrome.storage.sync.get([`darkThemeCheckbox`], (result) => {
     chrome.runtime.sendMessage({ todo: `darkTheme`, useTheme: true }, (res) => {
       if (res && res.cssApplied) {
         setTimeout(() => { // FIXME: Still not optimal, but it works for now...
-          highlightDay(new Date());
-        }, 60);
+          highlightDay(new Date(), `#36393e`);
+        }, 61);
       }
     });
   }
