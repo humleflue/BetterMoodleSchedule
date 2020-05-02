@@ -1,9 +1,9 @@
 // Timeout has to be applied to make sure theme is loaded
-highlightDay(new Date()); // Highlights the current day
-function highlightDay(day) {
+highlightDay(new Date(), `LightGray`); // Highlights the current day
+function highlightDay(day, highlightColor) {
   const dayElem = getDayElem(day);
   if (dayElem) {
-    dayElem.style.backgroundColor = "#36393e";//`LightGray`;
+    dayElem.style.backgroundColor = highlightColor;
     dayElem.style.minHeight = `${getWeekMaxHeight(dayElem)}px`;
   }
 }

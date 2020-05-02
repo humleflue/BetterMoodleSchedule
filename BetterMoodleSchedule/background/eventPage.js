@@ -17,7 +17,7 @@ chrome.runtime.onMessage.addListener((request, sender, sendResponse) => { // Ext
       break;
     case `darkTheme`:
       if (request.useTheme) {
-        //chrome.tabs.executeScript({ file: `content/js/darkTheme.js` });
+        // chrome.tabs.executeScript({ file: `content/js/darkTheme.js` });
         chrome.tabs.insertCSS({ file: `content/css/darkTheme.css` }, sendResponse({ cssApplied: true }));
       }
       break;
