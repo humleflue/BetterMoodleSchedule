@@ -23,21 +23,24 @@ function addCourseOptions() {
     checkbox.addEventListener(`change`, (e) => {
       if (e.target.checked) {
         chrome.storage.sync.set({ [courseName]: true });
-        showOrHideCourse(courseName, `visible`);
+        showOrHideCourse(courseName, `visible`, true);
       }
       else {
         chrome.storage.sync.set({ [courseName]: false });
-        showOrHideCourse(courseName, `hidden`);
+        showOrHideCourse(courseName, `hidden`, true);
       }
     });
   }
 }
 // Set courseName to either 'visible' or 'hidden'
-function showOrHideCourse(courseName, visibility) {
+function showOrHideCourse(courseName, visibility, setChromeStorage = false) {
   const allCourseEvents = document.getElementsByClassName(`event`);
   for (const event of allCourseEvents) {
     if (event.getElementsByTagName(`a`)[0].text === courseName) {
       event.style.visibility = visibility;
+      if (setChromeStorage) {
+        setEventStateInChromeStorage(event, visibility); // Er i events.js
+      }
     }
   }
 }
@@ -56,6 +59,7 @@ function getCheckboxStateFromChromeStorage() {
         showOrHideCourse(courseName, `visible`);
       }
       else if (result[courseName] === false) {
+        console.log(courseName);
         checkbox.checked = result[courseName];
         showOrHideCourse(courseName, `hidden`);
       }
