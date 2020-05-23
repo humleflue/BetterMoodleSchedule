@@ -25,8 +25,8 @@
       "js": [
         "content/js/helperFunctions.js",
         "content/js/sendMessage.js",
-        "content/js/events.js",
         "content/js/kursustable.js",
+        "content/js/events.js",
         "content/js/highlightDay.js"
       ],
       "css": [
