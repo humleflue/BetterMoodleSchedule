@@ -43,15 +43,19 @@ function showAllEventsOfDayOnClick(elem) {
 /* ****************************** CHANGESPECIFICEVENTTIME ****************************** */
 function changeSpecificEventTime() {
   const allCourseEventsTime = document.getElementsByClassName(`time`);
-  for (const time of allCourseEventsTime) {
+  console.log(allCourseEventsTime);
+  for (let i = 0; i < allCourseEventsTime.length; i++) {
+    const time = allCourseEventsTime[i];
     const identifier = `${getUniqueEventIdentifier(time.parentNode)}_time`; // Er i "helperFunctions.js"
     const originaltext = time.innerText;
     time.title = `Click to change time - Right click to revert`;
     // Let's user change time of event on click
     time.addEventListener(`click`, () => {
+      console.log(1, `hello`);
       const regEx = /\w+:([0-9][0-9] - [0-9][0-9]:[0-9][0-9])/;
       const eventTime = regEx.exec(time.innerText)[0]; // Gets the time of the event to use in the prompt
       let done = false;
+      console.log(1, `hello`);
       let wantedTime = prompt(`Enter new time of event:`, eventTime);
       do {
         const correctSyntax = testTimeForSyntax(wantedTime);
@@ -63,12 +67,15 @@ function changeSpecificEventTime() {
         }
       } while (!done);
       if (wantedTime !== null) {
+        console.log(3, `hello`);
         time.innerText = `Time: ${wantedTime}`;
         chrome.storage.sync.set({ [identifier]: time.innerText });
       }
+      console.log(2, `hello`);
     });
     // Restores original value on right click
     time.addEventListener(`contextmenu`, (elem) => {
+      console.log(7, `hello`);
       elem.preventDefault();
       time.innerText = originaltext;
       chrome.storage.sync.set({ [identifier]: time.innerText });

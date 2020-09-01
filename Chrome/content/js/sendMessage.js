@@ -8,7 +8,7 @@ chrome.storage.sync.get([`harmonicThemeCheckbox`], (result) => {
       if (res && res.cssApplied) {
         setTimeout(() => { // FIXME: Still not optimal, but it works for now...
           highlightDay(new Date(), `LightGray`);
-        }, 60);
+        }, 100);
       }
     });
   }
@@ -20,7 +20,7 @@ chrome.storage.sync.get([`darkThemeCheckbox`], (result) => {
       if (res && res.cssApplied) {
         setTimeout(() => { // FIXME: Still not optimal, but it works for now...
           highlightDay(new Date(), `#36393e`);
-        }, 61);
+        }, 100);
       }
     });
   }
