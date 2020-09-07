@@ -13,3 +13,4 @@ Chrome Extension which enhances the public Moodle schedule
 - Add events to the schedule with custom colors
 - Make event course material available from the schedule
 - Add option to optionspage: Color theme!
+- WARNING! Currently it doesn't support multiple schedules. So if you hide courses from on schedule, it will get hidden in other schedules aswell.
